@@ -1,0 +1,15 @@
+import pandas as pd
+from collections import OrderedDict
+df= pd.read_csv('./data/btc_hourly.csv',usecols=[1,2,3,4,5], engine='python')
+gt = pd.read_csv('./data/google_trends.csv', engine='python')
+print(df.dtypes)
+print(gt.dtypes)
+gt['bitcoin']=gt['bitcoin'].astype(float)
+df['Open']=df['Open'].astype(float)
+df['High']=df['High'].astype(float)
+df['Low']=df['Low'].astype(float)
+df['Close']=df['Close'].astype(float)
+gt['bitcoin']=gt['bitcoin'].astype(str)
+print("combining data...")
+d_final=pd.merge(df, gt, on="date", how="inner")
+d_final.to_csv("./data/combined.csv")

@@ -1,0 +1,7 @@
+test_tensorflow/
+main/.idea/
+
+main/data/btc_1min.csv
+.idea/.name
+.idea/Advanced Machine Learning Project.iml
+*.xml
