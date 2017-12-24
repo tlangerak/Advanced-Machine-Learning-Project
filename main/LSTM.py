@@ -4,8 +4,10 @@ from pandas import read_csv
 import math
 from keras import callbacks
 from keras.models import Sequential
-from keras.layers import Dense
+from keras.layers import Dense, Dropout
 from keras.layers import LSTM
+from keras.layers import Activation
+from keras.layers.advanced_activations import LeakyReLU
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.metrics import mean_squared_error
 
@@ -55,12 +57,15 @@ callbacks.EarlyStopping(monitor='val_loss',
 
 # create LSTM network, we can add more layers here.
 model = Sequential()
-model.add(LSTM(8, input_shape=(5, look_back)))
-model.add(Dense(1))
+model.add(LSTM(64, input_shape=(5, look_back), activation='sigmoid', return_sequences=True))
+model.add(LSTM(64,return_sequences=True))
+model.add(LSTM(64,return_sequences=True))
+model.add(LSTM(64))
+model.add(Dense(1, activation='sigmoid'))
 
 # fit the model
 model.compile(loss='mean_squared_error', optimizer='adam')
-history = model.fit(trainX, trainY, epochs=100, batch_size=1000, verbose=1, shuffle=False, validation_split=0.2)
+history = model.fit(trainX, trainY, epochs=100, batch_size=250, verbose=1, shuffle=False, validation_split=0.2)
 
 # make predictions
 trainPredict = model.predict(trainX)
