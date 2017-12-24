@@ -22,7 +22,7 @@ def create_dataset(dataset, look_back=1, look_forward=1440):
 numpy.random.seed(7)
 
 # load the dataset
-dataframe = read_csv('./data/btc_1min.csv', usecols=[1,2,3,4], engine='python', skipfooter=3)
+dataframe = read_csv('./data/combined.csv', usecols=[2,3,4,5,6], engine='python', skipfooter=3)
 dataset = dataframe.values
 dataset = dataset.astype('float64')
 
@@ -36,14 +36,14 @@ test_size = len(dataset) - train_size
 train, test = dataset[0:train_size,:], dataset[train_size:len(dataset),:]
 # reshape into X=t and Y=t+look_forward
 # which is the number of previous time steps to use as input variables to predict the next time period
-look_back = 35
-look_forward = 1440
+# number of hourse to use (look_back) to predict the future (look_forward)
+look_back = 75
+look_forward = 1
 trainX, trainY = create_dataset(train, look_back, look_forward)
 testX, testY = create_dataset(test, look_back, look_forward)
-
 #somewhere, something goes stuff wrong I think. But I need to check. Especially in how we sort our data het for the model.
 # reshape input to be [samples, time steps, features]
-print(trainX.shape)
+
 trainX = numpy.reshape(trainX, (trainX.shape[0], trainX.shape[2], trainX.shape[1]))
 testX = numpy.reshape(testX, (testX.shape[0], testX.shape[2], testX.shape[1]))
 
@@ -55,30 +55,21 @@ callbacks.EarlyStopping(monitor='val_loss',
 
 # create LSTM network, we can add more layers here.
 model = Sequential()
-model.add(LSTM(8, input_shape=(4, look_back)))
+model.add(LSTM(8, input_shape=(5, look_back)))
 model.add(Dense(1))
 
 # fit the model
 model.compile(loss='mean_squared_error', optimizer='adam')
-history = model.fit(trainX, trainY, epochs=5, batch_size=20000, verbose=1, shuffle=False, validation_split=0.2)
+history = model.fit(trainX, trainY, epochs=100, batch_size=1000, verbose=1, shuffle=False, validation_split=0.2)
 
 # make predictions
-
 trainPredict = model.predict(trainX)
 testPredict = model.predict(testX)
 
-
-print(trainPredict)
-# invert scale predictions
-trainPredict = scaler.inverse_transform(trainPredict)
-trainY = scaler.inverse_transform([trainY])
-testPredict = scaler.inverse_transform(testPredict)
-testY = scaler.inverse_transform([testY])
-
 # calculate root mean squared error
-trainScore = math.sqrt(mean_squared_error(trainY[0], trainPredict[:,0]))
+trainScore = math.sqrt(mean_squared_error(trainY[:], trainPredict[:]))
 print('Train Score: %.2f RMSE' % (trainScore))
-testScore = math.sqrt(mean_squared_error(testY[0], testPredict[:,0]))
+testScore = math.sqrt(mean_squared_error(testY[:], testPredict[:]))
 print('Test Score: %.2f RMSE' % (testScore))
 
 # shift train predictions for plotting
@@ -89,16 +80,16 @@ trainPredictPlot[look_back:len(trainPredict)+look_back, :] = trainPredict
 # shift test predictions for plotting
 testPredictPlot = numpy.empty_like(dataset)
 testPredictPlot[:, :] = numpy.nan
-testPredictPlot[len(trainPredict)+(look_back*2)+1:len(dataset)-1, :] = testPredict
+testPredictPlot[len(trainPredict)+(look_back*2)+look_forward+1:len(dataset)-look_forward-1, :] = testPredict
 
 # plot baseline and predictions
-plt.plot(scaler.inverse_transform(dataset))
+plt.plot(dataset[:,3])
 plt.plot(trainPredictPlot)
 plt.plot(testPredictPlot)
 plt.show()
 
-plt.plot(history.history['loss'][50:])
-plt.plot(history.history['val_loss'][50:])
+plt.plot(history.history['loss'][0:])
+plt.plot(history.history['val_loss'][0:])
 plt.title('model train vs validation loss')
 plt.ylabel('loss')
 plt.xlabel('epoch')
