@@ -6,6 +6,7 @@ from keras import callbacks
 from keras.models import Sequential
 from keras.layers import Dense, Dropout
 from keras.layers import LSTM
+from keras import optimizers
 from keras.layers import Activation
 from keras.layers.advanced_activations import LeakyReLU
 from sklearn.preprocessing import MinMaxScaler
@@ -39,7 +40,7 @@ train, test = dataset[0:train_size,:], dataset[train_size:len(dataset),:]
 # reshape into X=t and Y=t+look_forward
 # which is the number of previous time steps to use as input variables to predict the next time period
 # number of hourse to use (look_back) to predict the future (look_forward)
-look_back = 75
+look_back = 1
 look_forward = 1
 trainX, trainY = create_dataset(train, look_back, look_forward)
 testX, testY = create_dataset(test, look_back, look_forward)
@@ -49,25 +50,27 @@ testX, testY = create_dataset(test, look_back, look_forward)
 trainX = numpy.reshape(trainX, (trainX.shape[0], trainX.shape[2], trainX.shape[1]))
 testX = numpy.reshape(testX, (testX.shape[0], testX.shape[2], testX.shape[1]))
 
-# didnt get this working yet, it should stop the training process as soon as the validation loss starts increasing again.
-callbacks.EarlyStopping(monitor='val_loss',
+##early stopping, once delta increases with some patience to prevent local optima
+es = callbacks.EarlyStopping(monitor='val_loss',
                               min_delta=0,
-                              patience=2,
+                              patience=10,
                               verbose=2, mode='auto')
 
 # create LSTM network, we can add more layers here.
 model = Sequential()
-model.add(LSTM(64, input_shape=(5, look_back), activation='sigmoid', return_sequences=True))
-model.add(LSTM(64,return_sequences=True))
-model.add(LSTM(64,return_sequences=True))
-model.add(LSTM(64))
-model.add(Dense(1, activation='sigmoid'))
+model.add(LSTM(6, input_shape=(5, look_back), activation='tanh'))
+model.add(Dense(1, activation='tanh'))
 
-# fit the model
-model.compile(loss='mean_squared_error', optimizer='adam')
-history = model.fit(trainX, trainY, epochs=100, batch_size=250, verbose=1, shuffle=False, validation_split=0.2)
+#define optimizer
+sgd = optimizers.SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
+
+#optimize using mean_squared_error as loss fucntion.
+model.compile(loss='mean_squared_error', optimizer='sgd')
+
+history = model.fit(trainX, trainY, epochs=200, batch_size=1, verbose=2, shuffle=False, validation_split=0.3, callbacks=[es])
 
 # make predictions
+print(testX.shape)
 trainPredict = model.predict(trainX)
 testPredict = model.predict(testX)
 
@@ -93,6 +96,8 @@ plt.plot(trainPredictPlot)
 plt.plot(testPredictPlot)
 plt.show()
 
+
+##plot the validation error late.
 plt.plot(history.history['loss'][0:])
 plt.plot(history.history['val_loss'][0:])
 plt.title('model train vs validation loss')
