@@ -40,13 +40,12 @@ train, test = dataset[0:train_size,:], dataset[train_size:len(dataset),:]
 # reshape into X=t and Y=t+look_forward
 # which is the number of previous time steps to use as input variables to predict the next time period
 # number of hourse to use (look_back) to predict the future (look_forward)
-look_back = 1
+look_back = 10
 look_forward = 1
 trainX, trainY = create_dataset(train, look_back, look_forward)
 testX, testY = create_dataset(test, look_back, look_forward)
-#somewhere, something goes stuff wrong I think. But I need to check. Especially in how we sort our data het for the model.
-# reshape input to be [samples, time steps, features]
 
+# reshape input to be [samples, time steps, features]
 trainX = numpy.reshape(trainX, (trainX.shape[0], trainX.shape[2], trainX.shape[1]))
 testX = numpy.reshape(testX, (testX.shape[0], testX.shape[2], testX.shape[1]))
 
@@ -62,23 +61,21 @@ model.add(LSTM(6, input_shape=(5, look_back), activation='tanh'))
 model.add(Dense(1, activation='tanh'))
 
 #define optimizer
-sgd = optimizers.SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
+sgd = optimizers.SGD(lr=0.1, decay=1e-6, momentum=0.9, nesterov=True)
 
 #optimize using mean_squared_error as loss fucntion.
 model.compile(loss='mean_squared_error', optimizer='sgd')
-
-history = model.fit(trainX, trainY, epochs=200, batch_size=1, verbose=2, shuffle=False, validation_split=0.3, callbacks=[es])
+history = model.fit(trainX, trainY, epochs=2000, batch_size=250, verbose=2, shuffle=False, validation_split=0.2, callbacks=[es])
 
 # make predictions
-print(testX.shape)
 trainPredict = model.predict(trainX)
 testPredict = model.predict(testX)
 
 # calculate root mean squared error
 trainScore = math.sqrt(mean_squared_error(trainY[:], trainPredict[:]))
-print('Train Score: %.2f RMSE' % (trainScore))
+print('Train Score: %.4f RMSE' % (trainScore))
 testScore = math.sqrt(mean_squared_error(testY[:], testPredict[:]))
-print('Test Score: %.2f RMSE' % (testScore))
+print('Test Score: %.4f RMSE' % (testScore))
 
 # shift train predictions for plotting
 trainPredictPlot = numpy.empty_like(dataset)
@@ -91,9 +88,12 @@ testPredictPlot[:, :] = numpy.nan
 testPredictPlot[len(trainPredict)+(look_back*2)+look_forward+1:len(dataset)-look_forward-1, :] = testPredict
 
 # plot baseline and predictions
-plt.plot(dataset[:,3])
-plt.plot(trainPredictPlot)
-plt.plot(testPredictPlot)
+plt.plot(dataset[:,3], linewidth=0.5, label='dataset', color="blue")
+plt.plot(trainPredictPlot, linewidth=0.5, label='predict on train', color="red")
+plt.plot(testPredictPlot, linewidth=0.5, label='predict on test', color="green")
+plt.ylabel('loss')
+plt.xlabel('epoch')
+plt.legend(loc='best')
 plt.show()
 
 
