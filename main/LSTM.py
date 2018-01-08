@@ -1,3 +1,7 @@
+########################################
+#ALWAYS UPDATE THE MODEL SAVE STATEMENT#
+########################################
+
 import numpy
 import matplotlib.pyplot as plt
 from pandas import read_csv
@@ -66,6 +70,7 @@ sgd = optimizers.SGD(lr=0.1, decay=1e-6, momentum=0.9, nesterov=True)
 #optimize using mean_squared_error as loss fucntion.
 model.compile(loss='mean_squared_error', optimizer='sgd')
 history = model.fit(trainX, trainY, epochs=2000, batch_size=250, verbose=2, shuffle=False, validation_split=0.2, callbacks=[es])
+model.save('with_googletrends_lstm6_dense1_epochs2000_batchsize250_validation02.h5')
 
 # make predictions
 trainPredict = model.predict(trainX)
