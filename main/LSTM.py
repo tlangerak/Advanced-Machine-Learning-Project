@@ -15,6 +15,7 @@ from keras.layers import Activation
 from keras.layers.advanced_activations import LeakyReLU
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.metrics import mean_squared_error
+import time
 
 # convert an array of values into a dataset matrix
 def create_dataset(dataset, look_back=1, look_forward=1440):
@@ -70,7 +71,7 @@ sgd = optimizers.SGD(lr=0.1, decay=1e-6, momentum=0.9, nesterov=True)
 #optimize using mean_squared_error as loss fucntion.
 model.compile(loss='mean_squared_error', optimizer='sgd')
 history = model.fit(trainX, trainY, epochs=2000, batch_size=250, verbose=2, shuffle=False, validation_split=0.2, callbacks=[es])
-model.save('with_googletrends_lstm6_dense1_epochs2000_batchsize250_validation02.h5')
+model.save('with_googletrends_lstm6_dense1_epochs2000_batchsize250_validation02'+str(time.time())+'.h5')
 
 # make predictions
 trainPredict = model.predict(trainX)
