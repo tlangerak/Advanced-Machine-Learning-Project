@@ -51,6 +51,7 @@ train, test = dataset[0:train_size,:], dataset[train_size:len(dataset),:]
 
 for LB in range(1,20):
     for LF in [1,12,24,48,96,192,284]:
+        print(LB,LF)
         look_back = LB
         look_forward = LF
         trainX, trainY = create_dataset(train, look_back, look_forward)
@@ -75,9 +76,9 @@ for LB in range(1,20):
         sgd = optimizers.SGD(lr=0.05, decay=1e-6, momentum=0.9, nesterov=True)
 
         #optimize using mean_squared_error as loss fucntion.
-        model.compile(loss='mean_squared_error', optimizer=sgd)
+        model.compile(loss='mean_squared_error', optimizer='sgd')
         history = model.fit(trainX, trainY, epochs=2000, batch_size=250, verbose=2, shuffle=False, validation_split=0.2, callbacks=[es])
-        model.save('with_googletrends_lstm6_dense1_epochs2000_batchsize250_validation02'+str(int(time.time()))+'.h5')
+        model.save(str(LB)+"_"+str(LF)+'.h5')
 
         # make predictions
         trainPredict = model.predict(trainX)
@@ -107,7 +108,7 @@ for LB in range(1,20):
         plt.xlabel('epoch')
         plt.legend(loc='best')
         plt.savefig(str(LB)+"_"+str(LF)+'_predict.png')
-
+        plt.clf()
 
         ##plot the validation error late.
         plt.plot(history.history['loss'][0:])
@@ -117,5 +118,4 @@ for LB in range(1,20):
         plt.xlabel('epoch')
         plt.legend(['train', 'validation'], loc='upper right')
         plt.savefig(str(LB) + "_" + str(LF) + '_error.png')
-
-        plot_model(model, to_file='test.png', show_shapes=True)
+        plt.clf()

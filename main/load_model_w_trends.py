@@ -1,3 +1,4 @@
+from keras.utils import plot_model
 from keras.models import load_model
 import numpy
 import matplotlib.pyplot as plt
@@ -81,3 +82,5 @@ plt.ylabel('loss')
 plt.xlabel('epoch')
 plt.legend(loc='best')
 plt.show()
+
+plot_model(model, to_file='test.png', show_shapes=True)
