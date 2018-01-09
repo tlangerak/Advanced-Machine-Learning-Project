@@ -43,10 +43,10 @@ ep=2000 #epochs
 ba=250 #batchsize
 
 ##arrays for opslaan RMSE
-with_train=numpy.zeros((end,len(time_stamps)))
-without_train=numpy.zeros((end,len(time_stamps)))
-with_test=numpy.zeros((end,len(time_stamps)))
-without_test=numpy.zeros((end,len(time_stamps)))
+with_train=numpy.zeros((20,len(time_stamps)))
+without_train=numpy.zeros((20,len(time_stamps)))
+with_test=numpy.zeros((20,len(time_stamps)))
+without_test=numpy.zeros((20,len(time_stamps)))
 
 for LB in range(1,end+1):
     for i,LF in enumerate(time_stamps):
