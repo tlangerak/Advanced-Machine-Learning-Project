@@ -17,7 +17,6 @@ from keras.models import Sequential
 from keras.layers import Dense, Dropout
 from keras.layers import LSTM
 from keras import optimizers
-
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.metrics import mean_squared_error
 
@@ -38,7 +37,7 @@ numpy.random.seed(7)
 end = 20
 
 #Look forward in hours.
-time_stamps=[1,12,24,48,96,192,284]
+time_stamps=[1,12,24,48,96,192,384]
 ep=2000 #epochs
 ba=250 #batchsize
 
