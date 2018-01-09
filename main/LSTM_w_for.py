@@ -47,7 +47,7 @@ without_train=numpy.zeros((20,len(time_stamps)))
 with_test=numpy.zeros((20,len(time_stamps)))
 without_test=numpy.zeros((20,len(time_stamps)))
 
-for LB in range(1,end+1):
+for LB in range(11,end+1):
     for i,LF in enumerate(time_stamps):
         # load the dataset
         dataframe = read_csv('./data/combined.csv', usecols=[2, 3, 4, 5, 6], engine='python', skipfooter=3)
@@ -210,7 +210,7 @@ for LB in range(1,end+1):
         plt.ylabel('predicted')
         plt.xlabel('epoch')
         plt.legend(loc='best')
-        plt.savefig("with_"+str(LB)+"_"+str(LF)+'_predict.png')
+        plt.savefig("without_"+str(LB)+"_"+str(LF)+'_predict.png')
         plt.clf()
 
         ##plot the validation error late.
@@ -220,7 +220,7 @@ for LB in range(1,end+1):
         plt.ylabel('loss')
         plt.xlabel('epoch')
         plt.legend(['train', 'validation'], loc='upper right')
-        plt.savefig("with_"+str(LB) + "_" + str(LF) + '_error.png')
+        plt.savefig("without_"+str(LB) + "_" + str(LF) + '_error.png')
         plt.clf()
 
 numpy.savetxt("without_test.csv", without_test, delimiter=",")
