@@ -17,11 +17,10 @@ from keras.layers import Activation
 from keras.layers.advanced_activations import LeakyReLU
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.metrics import mean_squared_error
-from keras.utils import plot_model
 import time
 
 # convert an array of values into a dataset matrix
-def create_dataset(dataset, look_back=1, look_forward=1440):
+def create_dataset(dataset, look_back=1, look_forward=24):
 	dataX, dataY = [], []
 	for i in range(len(dataset)-look_back-look_forward-1):
 		a = dataset[i:(i+look_back), :]
@@ -33,7 +32,7 @@ def create_dataset(dataset, look_back=1, look_forward=1440):
 numpy.random.seed(7)
 
 # load the dataset
-dataframe = read_csv('./data/combined.csv', usecols=[2,3,4,5,6], engine='python', skipfooter=3)
+dataframe = read_csv('./data/combined.csv', usecols=[2,3,4,5], engine='python', skipfooter=3)
 dataset = dataframe.values
 dataset = dataset.astype('float64')
 
@@ -65,16 +64,14 @@ es = callbacks.EarlyStopping(monitor='val_loss',
 
 # create LSTM network, we can add more layers here.
 model = Sequential()
-model.add(LSTM(6, input_shape=(5, look_back), activation='tanh'))
+model.add(LSTM(6, input_shape=(4, look_back), activation='tanh'))
 model.add(Dense(1, activation='tanh'))
 
 #define optimizer
-sgd = optimizers.SGD(lr=0.05, decay=1e-6, momentum=0.9, nesterov=True)
+sgd = optimizers.SGD(lr=0.1, decay=1e-6, momentum=0.9, nesterov=True)
 
 #optimize using mean_squared_error as loss fucntion.
-model.compile(loss='mean_squared_error', optimizer=sgd)
-history = model.fit(trainX, trainY, epochs=2000, batch_size=250, verbose=2, shuffle=False, validation_split=0.2, callbacks=[es])
-model.save('with_googletrends_lstm6_dense1_epochs2000_batchsize250_validation02'+str(int(time.time()))+'.h5')
+model=load_model('without_googletrends_lstm6_dense1_epochs2000_batchsize250_validation021515415001.h5')
 
 # make predictions
 trainPredict = model.predict(trainX)
@@ -114,5 +111,3 @@ plt.ylabel('loss')
 plt.xlabel('epoch')
 plt.legend(['train', 'validation'], loc='upper right')
 plt.show()
-
-plot_model(model, to_file='test.png', show_shapes=True)

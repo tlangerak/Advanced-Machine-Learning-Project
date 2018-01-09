@@ -1,8 +1,3 @@
-########################################
-#ALWAYS UPDATE THE MODEL SAVE STATEMENT#
-#needs: python -m pip install h5py     #
-########################################
-
 from keras.models import load_model
 import numpy
 import matplotlib.pyplot as plt
@@ -17,7 +12,6 @@ from keras.layers import Activation
 from keras.layers.advanced_activations import LeakyReLU
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.metrics import mean_squared_error
-from keras.utils import plot_model
 import time
 
 # convert an array of values into a dataset matrix
@@ -57,24 +51,7 @@ testX, testY = create_dataset(test, look_back, look_forward)
 trainX = numpy.reshape(trainX, (trainX.shape[0], trainX.shape[2], trainX.shape[1]))
 testX = numpy.reshape(testX, (testX.shape[0], testX.shape[2], testX.shape[1]))
 
-##early stopping, once delta increases with some patience to prevent local optima
-es = callbacks.EarlyStopping(monitor='val_loss',
-                              min_delta=0,
-                              patience=10,
-                              verbose=2, mode='auto')
-
-# create LSTM network, we can add more layers here.
-model = Sequential()
-model.add(LSTM(6, input_shape=(5, look_back), activation='tanh'))
-model.add(Dense(1, activation='tanh'))
-
-#define optimizer
-sgd = optimizers.SGD(lr=0.05, decay=1e-6, momentum=0.9, nesterov=True)
-
-#optimize using mean_squared_error as loss fucntion.
-model.compile(loss='mean_squared_error', optimizer=sgd)
-history = model.fit(trainX, trainY, epochs=2000, batch_size=250, verbose=2, shuffle=False, validation_split=0.2, callbacks=[es])
-model.save('with_googletrends_lstm6_dense1_epochs2000_batchsize250_validation02'+str(int(time.time()))+'.h5')
+model=load_model('with_googletrends_lstm6_dense1_epochs2000_batchsize250_validation021515416205.h5')
 
 # make predictions
 trainPredict = model.predict(trainX)
@@ -104,15 +81,3 @@ plt.ylabel('loss')
 plt.xlabel('epoch')
 plt.legend(loc='best')
 plt.show()
-
-
-##plot the validation error late.
-plt.plot(history.history['loss'][0:])
-plt.plot(history.history['val_loss'][0:])
-plt.title('model train vs validation loss')
-plt.ylabel('loss')
-plt.xlabel('epoch')
-plt.legend(['train', 'validation'], loc='upper right')
-plt.show()
-
-plot_model(model, to_file='test.png', show_shapes=True)
