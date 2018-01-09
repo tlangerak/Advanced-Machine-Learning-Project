@@ -207,7 +207,7 @@ for LB in range(1,end+1):
         plt.plot(dataset[:,3], linewidth=0.5, label='dataset', color="blue")
         plt.plot(trainPredictPlot, linewidth=0.5, label='predict on train', color="red")
         plt.plot(testPredictPlot, linewidth=0.5, label='predict on test', color="green")
-        plt.ylabel('loss')
+        plt.ylabel('predicted')
         plt.xlabel('epoch')
         plt.legend(loc='best')
         plt.savefig("with_"+str(LB)+"_"+str(LF)+'_predict.png')
