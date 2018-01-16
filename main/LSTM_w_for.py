@@ -38,7 +38,7 @@ end = 20
 
 #Look forward in hours.
 time_stamps=[1,12,24,48,96,192,384]
-ep=2000 #epochs
+ep=1000 #epochs
 ba=250 #batchsize
 
 ##arrays for opslaan RMSE
@@ -47,7 +47,7 @@ without_train=numpy.zeros((20,len(time_stamps)))
 with_test=numpy.zeros((20,len(time_stamps)))
 without_test=numpy.zeros((20,len(time_stamps)))
 
-for LB in range(11,end+1):
+for LB in range(1,end+1):
     for i,LF in enumerate(time_stamps):
         # load the dataset
         dataframe = read_csv('./data/combined.csv', usecols=[2, 3, 4, 5, 6], engine='python', skipfooter=3)
@@ -79,10 +79,11 @@ for LB in range(11,end+1):
         ##early stopping, once delta increases with some patience to prevent local optima
         es = callbacks.EarlyStopping(monitor='val_loss',
                                       min_delta=0,
-                                      patience=10,
+                                      patience=2,
                                       verbose=2, mode='auto')
 
         # create LSTM network, we can add more layers here.
+
         model = Sequential()
         model.add(LSTM(6, input_shape=(5, look_back), activation='tanh'))
         model.add(Dense(1, activation='tanh'))
@@ -121,7 +122,7 @@ for LB in range(11,end+1):
         plt.plot(dataset[:,3], linewidth=0.5, label='dataset', color="blue")
         plt.plot(trainPredictPlot, linewidth=0.5, label='predict on train', color="red")
         plt.plot(testPredictPlot, linewidth=0.5, label='predict on test', color="green")
-        plt.ylabel('loss')
+        plt.ylabel('predict')
         plt.xlabel('epoch')
         plt.legend(loc='best')
         plt.savefig("with_"+str(LB)+"_"+str(LF)+'_predict.png')
@@ -136,6 +137,8 @@ for LB in range(11,end+1):
         plt.legend(['train', 'validation'], loc='upper right')
         plt.savefig("with_"+str(LB) + "_" + str(LF) + '_error.png')
         plt.clf()
+
+        model.reset_states()
 
         dataframe = read_csv('./data/combined.csv', usecols=[2, 3, 4, 5], engine='python', skipfooter=3)
         dataset = dataframe.values
@@ -164,7 +167,7 @@ for LB in range(11,end+1):
         ##early stopping, once delta increases with some patience to prevent local optima
         es = callbacks.EarlyStopping(monitor='val_loss',
                                      min_delta=0,
-                                     patience=10,
+                                     patience=2,
                                      verbose=2, mode='auto')
 
         # create LSTM network, we can add more layers here.
@@ -222,6 +225,9 @@ for LB in range(11,end+1):
         plt.legend(['train', 'validation'], loc='upper right')
         plt.savefig("without_"+str(LB) + "_" + str(LF) + '_error.png')
         plt.clf()
+
+
+        model.reset_states()
 
 numpy.savetxt("without_test.csv", without_test, delimiter=",")
 numpy.savetxt("with_test.csv", with_test, delimiter=",")
