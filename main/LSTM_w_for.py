@@ -38,7 +38,7 @@ end = 20
 
 #Look forward in hours.
 time_stamps=[1,12,24,48,96,192,384]
-ep=2000 #epochs
+ep=1000 #epochs
 ba=250 #batchsize
 
 ##arrays for opslaan RMSE
@@ -48,7 +48,7 @@ with_test=numpy.zeros((20,len(time_stamps)))
 without_test=numpy.zeros((20,len(time_stamps)))
 
 models=[]
-for LB in range(11,end+1):
+for LB in range(1,end+1):
     for i,LF in enumerate(time_stamps):
         print(len(models))
         # load the dataset
