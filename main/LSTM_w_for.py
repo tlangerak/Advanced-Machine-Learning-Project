@@ -47,7 +47,7 @@ without_train=numpy.zeros((20,len(time_stamps)))
 with_test=numpy.zeros((20,len(time_stamps)))
 without_test=numpy.zeros((20,len(time_stamps)))
 
-for LB in range(1,end+1):
+for LB in range(11,end+1):
     for i,LF in enumerate(time_stamps):
         # load the dataset
         dataframe = read_csv('./data/combined.csv', usecols=[2, 3, 4, 5, 6], engine='python', skipfooter=3)
