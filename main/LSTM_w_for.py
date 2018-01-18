@@ -158,8 +158,6 @@ for LB in range(11,end+1):
         # reshape into X=t and Y=t+look_forward
         # which is the number of previous time steps to use as input variables to predict the next time period
         # number of hourse to use (look_back) to predict the future (look_forward)
-        look_back = 10
-        look_forward = 1
         trainX, trainY = create_dataset(train, look_back, look_forward)
         testX, testY = create_dataset(test, look_back, look_forward)
 
@@ -176,6 +174,8 @@ for LB in range(11,end+1):
         # create LSTM network, we can add more layers here.
         models.append(Sequential())
         model = models[-1]
+        model.add(LSTM(6, input_shape=(5, look_back), activation='tanh'))
+        model.add(Dense(1, activation='tanh'))
 
         # define optimizer
         sgd = optimizers.SGD(lr=0.1, decay=1e-6, momentum=0.9, nesterov=True)

@@ -8,7 +8,7 @@ w_test = pd.read_csv('with_test.csv', engine='python')
 w_train = pd.read_csv('with_train.csv', engine='python')
 bitcoin = pd.read_csv('./data/combined.csv', usecols=[5], engine='python')
 
-[a,b,c,d,e,f,g]=plt.plot([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19], w_train)
+[a,b,c,d,e,f,g]=plt.plot([1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19], wo_test)
 plt.legend([a,b,c,d,e,f,g],[1,12,24,48,96,192,384],loc='best')
 plt.show()
 
