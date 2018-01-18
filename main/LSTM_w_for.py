@@ -47,8 +47,10 @@ without_train=numpy.zeros((20,len(time_stamps)))
 with_test=numpy.zeros((20,len(time_stamps)))
 without_test=numpy.zeros((20,len(time_stamps)))
 
+models=[]
 for LB in range(1,end+1):
     for i,LF in enumerate(time_stamps):
+        print(len(models))
         # load the dataset
         dataframe = read_csv('./data/combined.csv', usecols=[2, 3, 4, 5, 6], engine='python', skipfooter=3)
         dataset = dataframe.values
@@ -84,7 +86,8 @@ for LB in range(1,end+1):
 
         # create LSTM network, we can add more layers here.
 
-        model = Sequential()
+        models.append(Sequential())
+        model=models[-1]
         model.add(LSTM(6, input_shape=(5, look_back), activation='tanh'))
         model.add(Dense(1, activation='tanh'))
 
@@ -171,7 +174,8 @@ for LB in range(1,end+1):
                                      verbose=2, mode='auto')
 
         # create LSTM network, we can add more layers here.
-        model = Sequential()
+        models.append(Sequential())
+        model = models[-1]
         model.add(LSTM(6, input_shape=(4, look_back), activation='tanh'))
         model.add(Dense(1, activation='tanh'))
 
