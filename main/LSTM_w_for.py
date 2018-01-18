@@ -34,7 +34,7 @@ def create_dataset(dataset, look_back=1, look_forward=1440):
 numpy.random.seed(7)
 
 ##zet deze naar 10
-end = 20
+end = 10
 
 #Look forward in hours.
 time_stamps=[1,12,24,48,96,192,384]
