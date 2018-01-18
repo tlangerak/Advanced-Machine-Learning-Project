@@ -34,7 +34,7 @@ def create_dataset(dataset, look_back=1, look_forward=1440):
 numpy.random.seed(7)
 
 ##zet deze naar 10
-end = 10
+end = 13
 
 #Look forward in hours.
 time_stamps=[1,12,24,48,96,192,384]
@@ -173,8 +173,8 @@ for LB in range(11,end+1):
 
         # create LSTM network, we can add more layers here.
         models.append(Sequential())
-        model = models[-1]
-        model.add(LSTM(6, input_shape=(5, look_back), activation='tanh'))
+        model=models[-1]
+        model.add(LSTM(6, input_shape=(4, look_back), activation='tanh'))
         model.add(Dense(1, activation='tanh'))
 
         # define optimizer
@@ -184,9 +184,7 @@ for LB in range(11,end+1):
         model.compile(loss='mean_squared_error', optimizer='sgd')
         history = model.fit(trainX, trainY, epochs=ep, batch_size=ba, verbose=2, shuffle=False, validation_split=0.2,
                             callbacks=[es])
-        model.save("without_" +
-        model.add(LSTM(6, input_shape=(4, look_back), activation='tanh'))
-        model.add(Dense(1, activation='tanh'))str(LB) + "_" + str(LF) + '.h5')
+        model.save("without_" +str(LB) + "_" + str(LF) + '.h5')
         # make predictions
         trainPredict = model.predict(trainX)
         testPredict = model.predict(testX)
