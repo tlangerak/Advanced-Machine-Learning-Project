@@ -48,7 +48,7 @@ with_test=numpy.zeros((20,len(time_stamps)))
 without_test=numpy.zeros((20,len(time_stamps)))
 
 models=[]
-for LB in range(1,end+1):
+for LB in range(11,end+1):
     for i,LF in enumerate(time_stamps):
         print(len(models))
         # load the dataset
@@ -176,8 +176,6 @@ for LB in range(1,end+1):
         # create LSTM network, we can add more layers here.
         models.append(Sequential())
         model = models[-1]
-        model.add(LSTM(6, input_shape=(4, look_back), activation='tanh'))
-        model.add(Dense(1, activation='tanh'))
 
         # define optimizer
         sgd = optimizers.SGD(lr=0.1, decay=1e-6, momentum=0.9, nesterov=True)
@@ -186,7 +184,9 @@ for LB in range(1,end+1):
         model.compile(loss='mean_squared_error', optimizer='sgd')
         history = model.fit(trainX, trainY, epochs=ep, batch_size=ba, verbose=2, shuffle=False, validation_split=0.2,
                             callbacks=[es])
-        model.save("without_" + str(LB) + "_" + str(LF) + '.h5')
+        model.save("without_" +
+        model.add(LSTM(6, input_shape=(4, look_back), activation='tanh'))
+        model.add(Dense(1, activation='tanh'))str(LB) + "_" + str(LF) + '.h5')
         # make predictions
         trainPredict = model.predict(trainX)
         testPredict = model.predict(testX)
