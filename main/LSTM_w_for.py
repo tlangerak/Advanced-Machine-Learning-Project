@@ -34,7 +34,7 @@ def create_dataset(dataset, look_back=1, look_forward=1440):
 numpy.random.seed(7)
 
 ##zet deze naar 10
-end = 13
+end = 20
 
 #Look forward in hours.
 time_stamps=[1,12,24,48,96,192,384]
@@ -48,7 +48,7 @@ with_test=numpy.zeros((20,len(time_stamps)))
 without_test=numpy.zeros((20,len(time_stamps)))
 
 models=[]
-for LB in range(11,end+1):
+for LB in range(1,end+1):
     for i,LF in enumerate(time_stamps):
         print(len(models))
         # load the dataset
@@ -231,7 +231,7 @@ for LB in range(11,end+1):
 
         model.reset_states()
 
-numpy.savetxt("without_test.csv", without_test, delimiter=",")
-numpy.savetxt("with_test.csv", with_test, delimiter=",")
-numpy.savetxt("without_train.csv", without_train, delimiter=",")
-numpy.savetxt("with_train.csv", with_train, delimiter=",")
+numpy.savetxt("without_test_thomas.csv", without_test, delimiter=",")
+numpy.savetxt("with_test_thomas.csv", with_test, delimiter=",")
+numpy.savetxt("without_train_thomas.csv", without_train, delimiter=",")
+numpy.savetxt("with_train_thomas.csv", with_train, delimiter=",")
